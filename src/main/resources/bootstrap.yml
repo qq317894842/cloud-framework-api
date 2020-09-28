@@ -1,0 +1,16 @@
+spring:
+  application.name: cloud-framework-api
+  main.allow-bean-definition-overriding: true
+  cloud.nacos.config:
+    server-addr: 192.168.254.232:8848
+    namespace: dev # T环境空间命名
+    group: dev
+    file-extension: yml
+    enabled: false
+  profiles.active: local
+
+## 公共环境配置
+## 这个配置很重要,任何时候请勿注释
+crisps.nacos.config:
+  env: dev
+

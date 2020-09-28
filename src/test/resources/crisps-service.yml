@@ -1,0 +1,22 @@
+crisps.logging:
+  global.level: INFO                      # 日志输入级别,(默认 INFO)
+  info:
+    level: DEBUG                          # 配置 log_info.log 文件输出的日志级别,默认 DEBUG
+  gelf:
+    host: udp:192.168.254.178             # gelf日志中心服务器地址,(由公共配置文件配置)
+    port: 12000                           # gelf日志中心服务器端口,默认 12000,(由公共配置文件配置)
+    facility: ${spring.application.name}  # gelf记录设备名称,默认使用工程名称,(由公共配置文件配置)
+    version: 1.1                          # gelf日志中心版本号,默认 1.1,(由公共配置文件配置)
+
+
+crisps:
+  env: test
+
+  #mongodb.database: iboss                          # mongodb 数据库名称
+  #datasource.database: db_cloud_framework          # mysql 数据库名称
+  #datasource.uri: 172.16.0.62:8066                 # mysql 数据库连接地址
+  #datasource.username: db_iboss                    # mysql 数据库帐号
+  #datasource.password: db_iboss_t                  # mysql 数据库密码
+  zookeeper.namespace: crisps_elasticjob_scheduler     # zk namespace
+  zookeeper.nodes: 172.16.0.217:2181,172.16.0.218:2181,172.16.0.219:2181
+  message.center.path: https://tmcservice.dgg188.cn

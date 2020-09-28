@@ -1,0 +1,27 @@
+server.port: 8080
+
+dgg:
+  ################## 根据各个项目组实际连接信息配置 ##################
+  appId: cloud-framework
+  secretKey: 5db536b5b7a116afe1a67b53534105e4
+  mongodb.database: cloud-framework                # mongodb 数据库名称
+  datasource.database: db_cloud_framework          # mysql 数据库名称
+  datasource.uri: 192.168.254.18:6666              # mysql 数据库连接地址
+  datasource.username: root                        # mysql 数据库帐号
+  datasource.password: mypass                      # mysql 数据库密码
+  ################## 根据各个项目组实际连接信息配置 ##################
+
+  ############# swagger文档配置
+  swagger:
+    enabled: true                                 # 是否开启swagger文档
+    title: "脚手架测试"                            # 文档标题
+    base-package: "net.crisps.zcsc.cloud.example"         # 扫描路径
+    description: "项目描述信息"                     # 项目描述
+
+eureka.instance.metadataMap.group: cloud-framework # 灰度文件分组(读取配置文件的名称)
+
+#notify.nodes:
+#  # 通知组
+#  XXXX:
+#    templateCode: 427808223337609456       # 消息中心模版ID
+#    workers: 926466395                     # 需要通知的工号

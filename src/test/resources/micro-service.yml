@@ -1,0 +1,155 @@
+############# 开启请求压缩
+server.compression.enabled: false
+spring:
+  zipkin:
+    enabled: false
+    baseUrl: http://192.168.254.142:9411/        # zipkin 服务地址
+  sleuth.sampler.percentage: 0.1                 # 采集概率，0.1代表10%
+  application:
+    ## 版本配置
+    version:
+      isolation.enabled: true
+    ## 环境配置
+    environment:
+      # 启动和关闭环境隔离，环境隔离指调用端实例和提供端实例的元数据Metadata环境配置值相等才能调用。缺失则默认为false
+      isolation.enabled: true
+      # 启动和关闭环境路由，环境路由指在环境隔离下，调用端实例找不到符合条件的提供端实例，把流量路由到一个通用或者备份环境，
+      # 例如：元数据Metadata环境配置值为common（该值可配置，但不允许为保留值default）。缺失则默认为false
+      route.enabled: true
+      # 流量路由到指定的环境下。不允许为保留值default，缺失则默认为common
+      route: default
+    ## 策略配置
+    strategy:
+      # 开启和关闭路由策略的控制。一旦关闭，路由策略功能将失效。缺失则默认为true
+      control.enabled: true
+
+############# discovery Nacos 配置
+nacos.server-addr: ${spring.cloud.nacos.config.server-addr}
+nacos.plugin.namespace: ${spring.cloud.nacos.config.namespace}
+
+############# 网关配置
+gateway.base-path: https://tmicrouag.dgg188.cn
+
+############# eureka注册中心配置
+eureka:
+  instance: # 心跳设置，告诉服务器该实例仍在使用
+    lease-expiration-duration-in-seconds: 10            # 发呆时间，即服务续约到期时间（缺省为90s）
+    lease-renewal-interval-in-seconds: 5                # 心跳时间，即服务续约间隔时间（缺省为30s）
+    prefer-ip-address: true                             # 设置微服务调用地址为IP优先（缺省为false）
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    ip-address: ${spring.cloud.client.ip-address}
+    metadataMap:
+      version: 1.0
+      region: test
+  client:
+    healthcheck.enabled: true
+    instance-info-replication-interval-seconds: 10
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL:http://admin:admin@192.168.254.27:39817}/eureka
+
+############# feign配置
+feign:
+  hystrix.enabled: true
+  httpclient:
+    max-connections: 2000
+    max-connections-per-route: 1000
+  compression:
+    request.enabled: false
+    response.enabled: false
+
+############# ribbon配置
+ribbon:
+  ReadTimeout: 5000
+  ConnectTimeout: 5000
+  PoolMaxThreads: 100
+  MaxAutoRetries: 0
+  eager-load.enabled: true
+
+############# hystrix配置
+hystrix:
+  command.default:
+    fallback.enabled: true
+    execution:
+      timeout.enabled: false
+      isolation:
+        strategy: SEMAPHORE
+        semaphore.maxConcurrentRequests: 10000
+        thread.timeoutInMilliseconds: 5000
+
+crisps.logging:
+  global.level: INFO                      # 日志输入级别,(默认 INFO)
+  info:
+    level: DEBUG                          # 配置 log_info.log 文件输出的日志级别,默认 DEBUG
+  gelf:
+    host: udp:192.168.254.178             # gelf日志中心服务器地址,(由公共配置文件配置)
+    port: 12000                           # gelf日志中心服务器端口,默认 12000,(由公共配置文件配置)
+    facility: ${spring.application.name}  # gelf记录设备名称,默认使用工程名称,(由公共配置文件配置)
+    version: 1.1                          # gelf日志中心版本号,默认 1.1,(由公共配置文件配置)
+
+############# 端点管理
+management:
+  health:
+    elasticsearch.enabled: false
+  endpoints.web.exposure:
+    include: "*"
+    exclude: env,beans,configprops
+  endpoint.health.show-details: ALWAYS
+
+############## 服务初始化信息
+info:
+  project-name: ${spring.application.name}
+  project-finalName: ${plugin.finalName}
+  project-description: ${plugin.description}
+  project-sourceEncoding: ${plugin.sourceEncoding}
+  project-ip: ${spring.cloud.client.ip-address}:${server.port}
+  project-owner: © DGG group.All Rights Reserved.
+
+seata:
+  application-id: ${spring.application.name}
+  tx-service-group: dgg-at-group
+  client:
+    rm-report-success-enable: true
+    rm-table-meta-check-enable: false # 自动刷新缓存中的表结构（默认false）
+    rm-report-retry-count: 5 # 一阶段结果上报TC重试次数（默认5）
+    rm-async-commit-buffer-limit: 10000 # 异步提交缓存队列长度（默认10000）
+    rm:
+      lock:
+        lock-retry-internal: 10 # 校验或占用全局锁重试间隔（默认10ms）
+        lock-retry-times:    30 # 校验或占用全局锁重试次数（默认30）
+        lock-retry-policy-branch-rollback-on-conflict: true # 分支事务与其它全局回滚事务冲突时锁策略（优先释放本地锁让回滚成功）
+    tm-commit-retry-count:   3 # 一阶段全局提交结果上报TC重试次数（默认1次，建议大于1）
+    tm-rollback-retry-count: 3 # 一阶段全局回滚结果上报TC重试次数（默认1次，建议大于1）
+    undo:
+      undo-data-validation: true # 二阶段回滚镜像校验（默认true开启）
+      undo-log-serialization: jackson # undo序列化方式（默认jackson）
+      undo-log-table: undo_log  # 自定义undo表名（默认undo_log）
+    log:
+      exceptionRate: 100 # 日志异常输出概率（默认100）
+    support:
+      spring:
+        datasource-autoproxy: true
+    transport:
+      shutdown:
+        wait: 3
+      thread-factory:
+        boss-thread-prefix: NettyBoss
+        worker-thread-prefix: NettyServerNIOWorker
+        server-executor-thread-prefix: NettyServerBizHandler
+        share-boss-worker: false
+        client-selector-thread-prefix: NettyClientSelector
+        client-selector-thread-size: 1
+        client-worker-thread-prefix: NettyClientWorkerThread
+      type: TCP
+      server: NIO
+      heartbeat: true
+      serialization: seata
+      compressor: none
+      enable-client-batch-send-request: true # 客户端事务消息请求是否批量合并发送（默认true）
+  service:
+    grouplist:
+      seata-server: 192.168.254.141:8091
+    vgroup-mapping:
+      dgg-at-group: seata-server
+dgg.actuator:
+  url: http://192.168.254.216:9998/api/actuator_info/v1/upload.do
+  moduleId: application_moduleId
